@@ -9,6 +9,7 @@ const verificationNotice = document.querySelector('#verification-notice');
 const verificationCard = document.querySelector('#verification-card');
 const requestCard = document.querySelector('#request-card');
 const verifiedEmail = document.querySelector('#verified-email');
+const requesterLine = document.querySelector('#requester-line');
 const switchEmailButton = document.querySelector('#switch-email-button');
 const firebaseApp = window.firebase && config.firebase
   ? (window.firebase.apps.length
@@ -18,9 +19,6 @@ const firebaseApp = window.firebase && config.firebase
 const auth = firebaseApp ? firebaseApp.auth() : null;
 const firestore = firebaseApp ? firebaseApp.firestore() : null;
 const ticketCollection = config.ticketCollection || 'tickets';
-let requesters = [];
-let approvedRequester = null;
-let directoryLoaded = false;
 
 function showNotice(element, message, kind = 'error') {
   element.textContent = message;
@@ -80,21 +78,7 @@ async function finishEmailLinkSignIn() {
   }
 }
 
-async function loadDirectory(email) {
-  const requesterSnapshot = await firestore.collection('publicRequesters')
-    .where('active', '==', true)
-    .where('email', '==', email)
-    .get();
-
-  requesters = requesterSnapshot.docs.map((document) => ({
-    id: document.id,
-    ...document.data()
-  }));
-  approvedRequester = requesters.find((requester) => normalizeEmail(requester.email || '') === email) || null;
-  directoryLoaded = true;
-}
-
-async function showVerifiedForm(user) {
+function showVerifiedForm(user) {
   if (!user.email || !user.emailVerified) {
     throw new Error('A verified email address is required.');
   }
@@ -103,24 +87,10 @@ async function showVerifiedForm(user) {
   verificationCard.classList.add('hidden');
   requestCard.classList.remove('hidden');
   verifiedEmail.textContent = `Verified as ${email}`;
+  requesterLine.textContent = `Requester: ${email}`;
   clearNotice(verificationNotice);
   clearNotice(formNotice);
-  submitButton.disabled = true;
-  directoryLoaded = false;
-
-  try {
-    await loadDirectory(email);
-    if (!approvedRequester) {
-      showNotice(
-        formNotice,
-        'This verified email is not on the approved requester list. Contact the IT team to request access.'
-      );
-      return;
-    }
-    submitButton.disabled = false;
-  } catch (error) {
-    showNotice(formNotice, error.message);
-  }
+  submitButton.disabled = false;
 }
 
 async function restoreSession() {
@@ -142,7 +112,7 @@ async function restoreSession() {
         await auth.signOut();
         return;
       }
-      await showVerifiedForm(user);
+      showVerifiedForm(user);
     } catch (error) {
       showNotice(formNotice, error.message);
     }
@@ -181,21 +151,16 @@ form.addEventListener('submit', async (event) => {
     if (!user) throw new Error('Sign in with your verified email before submitting.');
     await user.reload();
     if (!user.emailVerified) throw new Error('Verify your email before submitting.');
-    if (!directoryLoaded || !approvedRequester) {
-      throw new Error('Your email is not on the approved requester list.');
-    }
 
     const data = Object.fromEntries(new FormData(form).entries());
     const publicData = {
       ticketType: 'joe_e',
-      requesterId: approvedRequester.id,
-      requesterName: approvedRequester.name,
+      requesterName: normalizeEmail(user.email),
       providerName: data.providerName.trim(),
       userType: data.userType,
       newUserFullName: data.newUserFullName.trim(),
       newUserEmail: normalizeEmail(data.newUserEmail),
-      npi: data.npi.trim(),
-      companyName: data.companyName.trim()
+      npi: data.npi.trim()
     };
     const description = [
       'Joe-E access request',
@@ -203,8 +168,7 @@ form.addEventListener('submit', async (event) => {
       `Provider: ${publicData.providerName}`,
       `User type: ${publicData.userType}`,
       `New user: ${publicData.newUserFullName} <${publicData.newUserEmail}>`,
-      `NPI: ${publicData.npi || 'Not provided'}`,
-      `Company: ${publicData.companyName}`
+      `NPI: ${publicData.npi || 'Not provided'}`
     ].join('\n');
     const now = new Date().toISOString();
     const ticketRef = firestore.collection(ticketCollection).doc();
@@ -230,7 +194,7 @@ form.addEventListener('submit', async (event) => {
   } catch (error) {
     showNotice(formNotice, error.message || 'The request could not be submitted.');
   } finally {
-    submitButton.disabled = !directoryLoaded || !approvedRequester;
+    submitButton.disabled = false;
   }
 });
 

@@ -43,14 +43,13 @@
       <div id="form-notice" class="notice" role="status" aria-live="polite"></div>
 
       <form id="request-form">
-        <label for="company">Company <span aria-hidden="true">*</span></label>
-        <input id="company" name="companyName" type="text" maxlength="150" required>
-
-        <label for="subject">Subject <span aria-hidden="true">*</span></label>
-        <input id="subject" name="subject" type="text" maxlength="150" required>
+        <p id="requester-line" class="required-note"></p>
 
         <label for="provider-name">Provider Name <span aria-hidden="true">*</span></label>
         <input id="provider-name" name="providerName" type="text" maxlength="150" required>
+
+        <label for="subject">Subject <span aria-hidden="true">*</span></label>
+        <input id="subject" name="subject" type="text" maxlength="150" required>
 
         <label for="user-type">User Type <span aria-hidden="true">*</span></label>
         <select id="user-type" name="userType" required>

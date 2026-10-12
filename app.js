@@ -34,6 +34,15 @@ function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
+function generateTicketId() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const bytes = new Uint8Array(8);
+  window.crypto.getRandomValues(bytes);
+  let id = '';
+  for (const byte of bytes) id += alphabet[byte % alphabet.length];
+  return id;
+}
+
 function createVerificationLinkSettings() {
   return {
     url: window.location.href.split('?')[0].split('#')[0],
@@ -171,7 +180,7 @@ form.addEventListener('submit', async (event) => {
       `NPI: ${publicData.npi || 'Not provided'}`
     ].join('\n');
     const now = new Date().toISOString();
-    const ticketRef = firestore.collection(ticketCollection).doc();
+    const ticketRef = firestore.collection(ticketCollection).doc(generateTicketId());
     const ticket = {
       id: ticketRef.id,
       requesterEmail: normalizeEmail(user.email),

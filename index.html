@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102238">
+  <meta name="description" content="Submit a Joe-E access request to the IT team.">
+  <title>Joe-E Access Request</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <p class="eyebrow">IT HELPDESK</p>
+      <h1>Joe-E access request</h1>
+      <p>Complete this form to request Joe-E access for a new user.</p>
+    </header>
+
+    <section class="card" id="verification-card" aria-labelledby="verification-title">
+      <h2 id="verification-title">Verify your work email</h2>
+      <p class="required-note">We’ll email you a secure sign-in link. Open it to verify your email before submitting a request.</p>
+      <div id="verification-notice" class="notice" role="status" aria-live="polite"></div>
+      <form id="verification-form">
+        <label for="verification-email">Your work email <span aria-hidden="true">*</span></label>
+        <input id="verification-email" name="email" type="email" maxlength="254"
+          autocomplete="email" required>
+        <button id="verification-button" type="submit">Email me a sign-in link</button>
+      </form>
+    </section>
+
+    <section class="card hidden" id="request-card" aria-labelledby="form-title">
+      <h2 id="form-title">Request details</h2>
+      <div class="signed-in-row">
+        <p id="verified-email" class="required-note"></p>
+        <button id="switch-email-button" class="secondary-button" type="button">Use another email</button>
+      </div>
+      <p class="required-note">Fields marked required must be completed.</p>
+      <div id="form-notice" class="notice" role="status" aria-live="polite"></div>
+
+      <form id="request-form">
+        <label for="requester-search">Search a requester <span aria-hidden="true">*</span></label>
+        <input id="requester-search" name="requesterSearch" type="search" list="requester-options"
+          autocomplete="off" required>
+        <datalist id="requester-options"></datalist>
+
+        <label for="subject">Subject <span aria-hidden="true">*</span></label>
+        <input id="subject" name="subject" type="text" maxlength="150" required>
+
+        <label for="provider-name">Provider Name <span aria-hidden="true">*</span></label>
+        <input id="provider-name" name="providerName" type="text" maxlength="150" required>
+
+        <label for="user-type">User Type <span aria-hidden="true">*</span></label>
+        <select id="user-type" name="userType" required>
+          <option value="">Select user type</option>
+          <option value="Billing Agent">Billing Agent</option>
+          <option value="Clinician">Clinician</option>
+        </select>
+
+        <label for="new-user-name">New User Full Name <span aria-hidden="true">*</span></label>
+        <input id="new-user-name" name="newUserFullName" type="text" maxlength="150" required>
+
+        <label for="new-user-email">New User Email <span aria-hidden="true">*</span></label>
+        <input id="new-user-email" name="newUserEmail" type="email" maxlength="254"
+          autocomplete="email" required>
+
+        <label for="npi">NPI #</label>
+        <input id="npi" name="npi" type="text" inputmode="numeric" maxlength="10"
+          pattern="[0-9]{10}" aria-describedby="npi-hint">
+        <p class="field-hint" id="npi-hint">Enter 10 digits when applicable.</p>
+
+        <label for="company">Company <span aria-hidden="true">*</span></label>
+        <select id="company" name="companyId" required>
+          <option value="">Loading approved companies…</option>
+        </select>
+
+        <button id="submit-button" type="submit">Submit access request</button>
+      </form>
+      <p class="privacy-note">Do not include passwords or other sensitive information in this form.</p>
+    </section>
+    <footer>Requests are sent to the IT team for review.</footer>
+  </main>
+</body>
+</html>

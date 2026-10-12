@@ -35,12 +35,9 @@ function normalizeEmail(email) {
 }
 
 function generateTicketId() {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const bytes = new Uint8Array(8);
-  window.crypto.getRandomValues(bytes);
-  let id = '';
-  for (const byte of bytes) id += alphabet[byte % alphabet.length];
-  return id;
+  const value = new Uint32Array(1);
+  window.crypto.getRandomValues(value);
+  return String(1000000 + (value[0] % 9000000));
 }
 
 function createVerificationLinkSettings() {

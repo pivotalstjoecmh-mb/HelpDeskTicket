@@ -87,7 +87,7 @@ function showVerifiedForm(user) {
   verificationCard.classList.add('hidden');
   requestCard.classList.remove('hidden');
   verifiedEmail.textContent = `Verified as ${email}`;
-  requesterLine.textContent = `Requester: ${email}`;
+  requesterLine.value = email;
   clearNotice(verificationNotice);
   clearNotice(formNotice);
   submitButton.disabled = false;

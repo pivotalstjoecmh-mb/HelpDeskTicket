@@ -43,10 +43,8 @@
       <div id="form-notice" class="notice" role="status" aria-live="polite"></div>
 
       <form id="request-form">
-        <label for="requester-search">Search a requester <span aria-hidden="true">*</span></label>
-        <input id="requester-search" name="requesterSearch" type="search" list="requester-options"
-          autocomplete="off" required>
-        <datalist id="requester-options"></datalist>
+        <label for="company">Company <span aria-hidden="true">*</span></label>
+        <input id="company" name="companyName" type="text" maxlength="150" required>
 
         <label for="subject">Subject <span aria-hidden="true">*</span></label>
         <input id="subject" name="subject" type="text" maxlength="150" required>
@@ -72,11 +70,6 @@
         <input id="npi" name="npi" type="text" inputmode="numeric" maxlength="10"
           pattern="[0-9]{10}" aria-describedby="npi-hint">
         <p class="field-hint" id="npi-hint">Enter 10 digits when applicable.</p>
-
-        <label for="company">Company <span aria-hidden="true">*</span></label>
-        <select id="company" name="companyId" required>
-          <option value="">Loading approved companies…</option>
-        </select>
 
         <button id="submit-button" type="submit">Submit access request</button>
       </form>

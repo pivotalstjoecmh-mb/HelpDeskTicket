@@ -1,8 +1,5 @@
 const config = window.HELPDESK_PORTAL_CONFIG || {};
 const form = document.querySelector('#request-form');
-const requesterSearch = document.querySelector('#requester-search');
-const requesterOptions = document.querySelector('#requester-options');
-const companySelect = document.querySelector('#company');
 const submitButton = document.querySelector('#submit-button');
 const formNotice = document.querySelector('#form-notice');
 const verificationForm = document.querySelector('#verification-form');
@@ -84,47 +81,16 @@ async function finishEmailLinkSignIn() {
 }
 
 async function loadDirectory(email) {
-  const [requesterSnapshot, companySnapshot] = await Promise.all([
-    firestore.collection('publicRequesters')
-      .where('active', '==', true)
-      .where('email', '==', email)
-      .get(),
-    firestore.collection('publicCompanies')
-      .where('active', '==', true)
-      .get()
-  ]);
+  const requesterSnapshot = await firestore.collection('publicRequesters')
+    .where('active', '==', true)
+    .where('email', '==', email)
+    .get();
 
   requesters = requesterSnapshot.docs.map((document) => ({
     id: document.id,
     ...document.data()
   }));
   approvedRequester = requesters.find((requester) => normalizeEmail(requester.email || '') === email) || null;
-
-  requesterOptions.replaceChildren();
-  if (approvedRequester) {
-    const option = document.createElement('option');
-    option.value = approvedRequester.name;
-    requesterOptions.append(option);
-    requesterSearch.value = approvedRequester.name;
-    requesterSearch.readOnly = true;
-  } else {
-    requesterSearch.value = '';
-    requesterSearch.readOnly = false;
-    for (const requester of requesters) {
-      const option = document.createElement('option');
-      option.value = requester.name;
-      requesterOptions.append(option);
-    }
-  }
-
-  companySelect.replaceChildren(new Option('Select company', ''));
-  for (const document of companySnapshot.docs) {
-    const company = document.data();
-    companySelect.add(new Option(company.name, document.id));
-  }
-  if (companySelect.options.length === 1) {
-    throw new Error('No approved companies are available. Please contact the IT team.');
-  }
   directoryLoaded = true;
 }
 
@@ -145,7 +111,6 @@ async function showVerifiedForm(user) {
   try {
     await loadDirectory(email);
     if (!approvedRequester) {
-      requesterSearch.readOnly = false;
       showNotice(
         formNotice,
         'This verified email is not on the approved requester list. Contact the IT team to request access.'
@@ -200,9 +165,6 @@ verificationForm.addEventListener('submit', async (event) => {
 switchEmailButton.addEventListener('click', async () => {
   if (auth) await auth.signOut();
   form.reset();
-  requesterSearch.readOnly = false;
-  requesterOptions.replaceChildren();
-  companySelect.replaceChildren(new Option('Sign in to load approved companies', ''));
   requestCard.classList.add('hidden');
   verificationCard.classList.remove('hidden');
   verificationEmail.value = '';
@@ -223,30 +185,17 @@ form.addEventListener('submit', async (event) => {
       throw new Error('Your email is not on the approved requester list.');
     }
 
-    const companyId = companySelect.value;
-    const companySnapshot = await firestore.collection('publicCompanies').doc(companyId).get();
-    if (!companySnapshot.exists || companySnapshot.data().active !== true) {
-      throw new Error('Select an active company from the approved list.');
-    }
-    const company = companySnapshot.data();
     const data = Object.fromEntries(new FormData(form).entries());
-    const selectedRequester = requesterSearch.value.trim() === approvedRequester.name
-      ? approvedRequester
-      : requesters.find((requester) => requester.name === requesterSearch.value.trim());
-    if (!selectedRequester || normalizeEmail(selectedRequester.email || '') !== normalizeEmail(user.email)) {
-      throw new Error('Select your own name from the approved requester list.');
-    }
     const publicData = {
       ticketType: 'joe_e',
-      requesterId: selectedRequester.id,
-      requesterName: selectedRequester.name,
+      requesterId: approvedRequester.id,
+      requesterName: approvedRequester.name,
       providerName: data.providerName.trim(),
       userType: data.userType,
       newUserFullName: data.newUserFullName.trim(),
       newUserEmail: normalizeEmail(data.newUserEmail),
       npi: data.npi.trim(),
-      companyId,
-      companyName: company.name
+      companyName: data.companyName.trim()
     };
     const description = [
       'Joe-E access request',
@@ -277,7 +226,6 @@ form.addEventListener('submit', async (event) => {
     };
     await ticketRef.set(ticket);
     form.reset();
-    requesterSearch.value = approvedRequester.name;
     showNotice(formNotice, `Your Joe-E access request was submitted. Ticket number: #${ticketRef.id}.`, 'success');
   } catch (error) {
     showNotice(formNotice, error.message || 'The request could not be submitted.');

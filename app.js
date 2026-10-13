@@ -11,6 +11,8 @@ const requestCard = document.querySelector('#request-card');
 const verifiedEmail = document.querySelector('#verified-email');
 const requesterLine = document.querySelector('#requester-line');
 const switchEmailButton = document.querySelector('#switch-email-button');
+const submissionDialog = document.querySelector('#submission-dialog');
+const submissionCloseButton = document.querySelector('#submission-close-button');
 const firebaseApp = window.firebase && config.firebase
   ? (window.firebase.apps.length
     ? window.firebase.app()
@@ -32,6 +34,11 @@ function clearNotice(element) {
 
 function normalizeEmail(email) {
   return email.trim().toLowerCase();
+}
+
+function showSubmissionConfirmation(ticketId) {
+  document.querySelector('#submitted-ticket-number').textContent = `#${ticketId}`;
+  submissionDialog.showModal();
 }
 
 function createVerificationLinkSettings() {
@@ -197,12 +204,16 @@ form.addEventListener('submit', async (event) => {
       return nextId;
     });
     form.reset();
-    showNotice(formNotice, `Your Joe-E access request was submitted. Ticket number: #${ticketId}.`, 'success');
+    showSubmissionConfirmation(ticketId);
   } catch (error) {
     showNotice(formNotice, error.message || 'The request could not be submitted.');
   } finally {
     submitButton.disabled = false;
   }
+});
+
+submissionCloseButton.addEventListener('click', () => {
+  submissionDialog.close();
 });
 
 restoreSession();

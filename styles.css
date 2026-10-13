@@ -199,3 +199,79 @@ footer {
   font-size: 12px;
   text-align: center;
 }
+
+.submission-dialog {
+  width: min(100% - 32px, 440px);
+  border: 1px solid #315b49;
+  border-radius: 16px;
+  padding: 0;
+  color: #e4edf6;
+  background: #141f30;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .55);
+}
+
+.submission-dialog::backdrop {
+  background: rgba(3, 8, 14, .76);
+  backdrop-filter: blur(3px);
+}
+
+.submission-confirmation {
+  display: grid;
+  justify-items: center;
+  padding: 32px 28px 28px;
+  text-align: center;
+}
+
+.submission-check {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  color: #a8e2c2;
+  background: #1b4935;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.submission-confirmation h2 {
+  margin: 0;
+  color: #e4edf6;
+  font-size: 22px;
+}
+
+.submission-confirmation > p:not(.eyebrow) {
+  margin: 10px 0 0;
+  color: #a8b8c8;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.submitted-ticket-number {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  margin-top: 22px;
+  border: 1px solid #35465a;
+  border-radius: 10px;
+  padding: 14px;
+  background: rgba(20, 33, 48, .94);
+}
+
+.submitted-ticket-number span {
+  color: #a8b8c8;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.submitted-ticket-number strong {
+  color: #b8d8ff;
+  font-size: 24px;
+}
+
+.submission-confirmation button {
+  width: 100%;
+  margin-top: 20px;
+}

@@ -77,5 +77,19 @@
     </section>
     <footer>Requests are sent to the IT team for review.</footer>
   </main>
+
+  <dialog class="submission-dialog" id="submission-dialog" aria-labelledby="submission-title">
+    <div class="submission-confirmation">
+      <span class="submission-check" aria-hidden="true">✓</span>
+      <p class="eyebrow">REQUEST RECEIVED</p>
+      <h2 id="submission-title">Your request was submitted</h2>
+      <p id="submission-message">Your Joe-E access request has been received by the IT team.</p>
+      <div class="submitted-ticket-number">
+        <span>Ticket number</span>
+        <strong id="submitted-ticket-number"></strong>
+      </div>
+      <button class="primary-button" id="submission-close-button" type="button">Done</button>
+    </div>
+  </dialog>
 </body>
 </html>

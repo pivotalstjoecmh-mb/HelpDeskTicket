@@ -18,6 +18,9 @@ const newUserNameLabel = document.querySelector('#new-user-name-label');
 const newUserNameInput = document.querySelector('#new-user-name');
 const newUserEmailField = document.querySelector('#new-user-email-field');
 const newUserEmailInput = document.querySelector('#new-user-email');
+const userTypeField = document.querySelector('#user-type-field');
+const userTypeInput = document.querySelector('#user-type');
+const providerNameInput = document.querySelector('#provider-name');
 const firebaseApp = window.firebase && config.firebase
   ? (window.firebase.apps.length
     ? window.firebase.app()
@@ -41,6 +44,25 @@ function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
+const PROVIDER_NAME_KEY = 'joe-e-provider-name';
+
+function restoreProviderName() {
+  try {
+    const saved = window.localStorage.getItem(PROVIDER_NAME_KEY);
+    if (saved) providerNameInput.value = saved;
+  } catch (error) {
+    // localStorage unavailable; nothing to restore.
+  }
+}
+
+providerNameInput.addEventListener('input', () => {
+  try {
+    window.localStorage.setItem(PROVIDER_NAME_KEY, providerNameInput.value.trim());
+  } catch (error) {
+    // localStorage unavailable; skip saving.
+  }
+});
+
 function updateSubjectFields() {
   const isNewUser = subjectSelect.value === 'New User';
   newUserNameLabel.innerHTML = isNewUser
@@ -49,6 +71,9 @@ function updateSubjectFields() {
   newUserEmailField.classList.toggle('hidden', !isNewUser);
   newUserEmailInput.required = isNewUser;
   if (!isNewUser) newUserEmailInput.value = '';
+  userTypeField.classList.toggle('hidden', !isNewUser);
+  userTypeInput.required = isNewUser;
+  if (!isNewUser) userTypeInput.value = '';
 }
 
 subjectSelect.addEventListener('change', updateSubjectFields);
@@ -116,6 +141,7 @@ function showVerifiedForm(user) {
   clearNotice(formNotice);
   submitButton.disabled = false;
   updateSubjectFields();
+  restoreProviderName();
 }
 
 async function restoreSession() {
@@ -194,12 +220,12 @@ form.addEventListener('submit', async (event) => {
       `Request type: ${data.subject}`,
       `Requester: ${publicData.requesterName}`,
       `Provider: ${publicData.providerName}`,
-      `User type: ${publicData.userType}`,
+      isNewUser ? `User type: ${publicData.userType}` : '',
       isNewUser
         ? `New user: ${publicData.newUserFullName} <${publicData.newUserEmail}>`
         : `User name: ${publicData.newUserFullName}`,
       `NPI: ${publicData.npi || 'Not provided'}`
-    ].join('\n');
+    ].filter(Boolean).join('\n');
     const now = new Date().toISOString();
     const sequenceRef = firestore.collection('helpdeskMetadata').doc('ticketSequence');
     const ticketId = await firestore.runTransaction(async (transaction) => {
@@ -227,6 +253,8 @@ form.addEventListener('submit', async (event) => {
       return nextId;
     });
     form.reset();
+    updateSubjectFields();
+    restoreProviderName();
     showSubmissionConfirmation(ticketId);
   } catch (error) {
     showNotice(formNotice, error.message || 'The request could not be submitted.');

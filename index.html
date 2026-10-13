@@ -58,12 +58,14 @@
           <option value="NPI Pin">NPI Pin</option>
         </select>
 
-        <label for="user-type">User Type <span aria-hidden="true">*</span></label>
-        <select id="user-type" name="userType" required>
-          <option value="">Select user type</option>
-          <option value="Billing Agent">Billing Agent</option>
-          <option value="Clinician">Clinician</option>
-        </select>
+        <div id="user-type-field">
+          <label for="user-type">User Type <span aria-hidden="true">*</span></label>
+          <select id="user-type" name="userType" required>
+            <option value="">Select user type</option>
+            <option value="Billing Agent">Billing Agent</option>
+            <option value="Clinician">Clinician</option>
+          </select>
+        </div>
 
         <label for="new-user-name" id="new-user-name-label">New User Full Name <span aria-hidden="true">*</span></label>
         <input id="new-user-name" name="newUserFullName" type="text" maxlength="150" required>

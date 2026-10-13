@@ -50,7 +50,13 @@
         <input id="provider-name" name="providerName" type="text" maxlength="150" required>
 
         <label for="subject">Subject <span aria-hidden="true">*</span></label>
-        <input id="subject" name="subject" type="text" maxlength="150" placeholder="New User" required>
+        <select id="subject" name="subject" required>
+          <option value="">Select a request type</option>
+          <option value="New User">New User</option>
+          <option value="Change/Reset Password">Change/Reset Password</option>
+          <option value="Reset 2FA">Reset 2FA</option>
+          <option value="NPI Pin">NPI Pin</option>
+        </select>
 
         <label for="user-type">User Type <span aria-hidden="true">*</span></label>
         <select id="user-type" name="userType" required>

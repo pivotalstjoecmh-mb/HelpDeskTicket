@@ -56,6 +56,7 @@
           <option value="Change/Reset Password">Change/Reset Password</option>
           <option value="Reset 2FA">Reset 2FA</option>
           <option value="NPI Pin">NPI Pin</option>
+          <option value="Other">Other</option>
         </select>
 
         <div id="user-type-field">
@@ -74,6 +75,11 @@
           <label for="new-user-email">New User Email <span aria-hidden="true">*</span></label>
           <input id="new-user-email" name="newUserEmail" type="email" maxlength="254"
             autocomplete="email" required>
+        </div>
+
+        <div id="description-field">
+          <label for="description">Description <span aria-hidden="true">*</span></label>
+          <textarea id="description" name="description" rows="4" maxlength="2000" required></textarea>
         </div>
 
         <label for="npi">NPI #</label>

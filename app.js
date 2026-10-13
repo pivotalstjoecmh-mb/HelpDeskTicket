@@ -21,6 +21,8 @@ const newUserEmailInput = document.querySelector('#new-user-email');
 const userTypeField = document.querySelector('#user-type-field');
 const userTypeInput = document.querySelector('#user-type');
 const providerNameInput = document.querySelector('#provider-name');
+const descriptionField = document.querySelector('#description-field');
+const descriptionInput = document.querySelector('#description');
 const firebaseApp = window.firebase && config.firebase
   ? (window.firebase.apps.length
     ? window.firebase.app()
@@ -74,6 +76,11 @@ function updateSubjectFields() {
   userTypeField.classList.toggle('hidden', !isNewUser);
   userTypeInput.required = isNewUser;
   if (!isNewUser) userTypeInput.value = '';
+
+  const isOther = subjectSelect.value === 'Other';
+  descriptionField.classList.toggle('hidden', !isOther);
+  descriptionInput.required = isOther;
+  if (!isOther) descriptionInput.value = '';
 }
 
 subjectSelect.addEventListener('change', updateSubjectFields);
@@ -206,6 +213,7 @@ form.addEventListener('submit', async (event) => {
 
     const data = Object.fromEntries(new FormData(form).entries());
     const isNewUser = data.subject === 'New User';
+    const isOther = data.subject === 'Other';
     const publicData = {
       ticketType: 'joe_e',
       requesterName: normalizeEmail(user.email),
@@ -224,6 +232,7 @@ form.addEventListener('submit', async (event) => {
       isNewUser
         ? `New user: ${publicData.newUserFullName} <${publicData.newUserEmail}>`
         : `User name: ${publicData.newUserFullName}`,
+      isOther ? `Description: ${data.description.trim()}` : '',
       `NPI: ${publicData.npi || 'Not provided'}`
     ].filter(Boolean).join('\n');
     const now = new Date().toISOString();

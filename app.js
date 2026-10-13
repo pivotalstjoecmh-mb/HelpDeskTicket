@@ -34,12 +34,6 @@ function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
-function generateTicketId() {
-  const value = new Uint32Array(1);
-  window.crypto.getRandomValues(value);
-  return String(1000000 + (value[0] % 9000000));
-}
-
 function createVerificationLinkSettings() {
   return {
     url: window.location.href.split('?')[0].split('#')[0],
@@ -177,26 +171,33 @@ form.addEventListener('submit', async (event) => {
       `NPI: ${publicData.npi || 'Not provided'}`
     ].join('\n');
     const now = new Date().toISOString();
-    const ticketRef = firestore.collection(ticketCollection).doc(generateTicketId());
-    const ticket = {
-      id: ticketRef.id,
-      requesterEmail: normalizeEmail(user.email),
-      subject: data.subject.trim(),
-      description,
-      category: 'access',
-      ticketType: 'joe_e',
-      intakeSource: 'github_pages',
-      onboardingData: null,
-      publicData,
-      status: 'new',
-      priority: 'normal',
-      attachments: [],
-      createdAt: now,
-      updatedAt: now
-    };
-    await ticketRef.set(ticket);
+    const sequenceRef = firestore.collection('helpdeskMetadata').doc('ticketSequence');
+    const ticketId = await firestore.runTransaction(async (transaction) => {
+      const sequenceSnapshot = await transaction.get(sequenceRef);
+      const nextId = (sequenceSnapshot.exists ? sequenceSnapshot.data().value : 0) + 1;
+      const ticketRef = firestore.collection(ticketCollection).doc(String(nextId));
+      const ticket = {
+        id: String(nextId),
+        requesterEmail: normalizeEmail(user.email),
+        subject: data.subject.trim(),
+        description,
+        category: 'access',
+        ticketType: 'joe_e',
+        intakeSource: 'github_pages',
+        onboardingData: null,
+        publicData,
+        status: 'new',
+        priority: 'normal',
+        attachments: [],
+        createdAt: now,
+        updatedAt: now
+      };
+      transaction.set(sequenceRef, { value: nextId });
+      transaction.set(ticketRef, ticket);
+      return nextId;
+    });
     form.reset();
-    showNotice(formNotice, `Your Joe-E access request was submitted. Ticket number: #${ticketRef.id}.`, 'success');
+    showNotice(formNotice, `Your Joe-E access request was submitted. Ticket number: #${ticketId}.`, 'success');
   } catch (error) {
     showNotice(formNotice, error.message || 'The request could not be submitted.');
   } finally {

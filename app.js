@@ -13,6 +13,11 @@ const requesterLine = document.querySelector('#requester-line');
 const switchEmailButton = document.querySelector('#switch-email-button');
 const submissionDialog = document.querySelector('#submission-dialog');
 const submissionCloseButton = document.querySelector('#submission-close-button');
+const subjectSelect = document.querySelector('#subject');
+const newUserNameLabel = document.querySelector('#new-user-name-label');
+const newUserNameInput = document.querySelector('#new-user-name');
+const newUserEmailField = document.querySelector('#new-user-email-field');
+const newUserEmailInput = document.querySelector('#new-user-email');
 const firebaseApp = window.firebase && config.firebase
   ? (window.firebase.apps.length
     ? window.firebase.app()
@@ -35,6 +40,18 @@ function clearNotice(element) {
 function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
+
+function updateSubjectFields() {
+  const isNewUser = subjectSelect.value === 'New User';
+  newUserNameLabel.innerHTML = isNewUser
+    ? 'New User Full Name <span aria-hidden="true">*</span>'
+    : 'User Name <span aria-hidden="true">*</span>';
+  newUserEmailField.classList.toggle('hidden', !isNewUser);
+  newUserEmailInput.required = isNewUser;
+  if (!isNewUser) newUserEmailInput.value = '';
+}
+
+subjectSelect.addEventListener('change', updateSubjectFields);
 
 function showSubmissionConfirmation(ticketId) {
   document.querySelector('#submitted-ticket-number').textContent = `#${ticketId}`;
@@ -98,6 +115,7 @@ function showVerifiedForm(user) {
   clearNotice(verificationNotice);
   clearNotice(formNotice);
   submitButton.disabled = false;
+  updateSubjectFields();
 }
 
 async function restoreSession() {
@@ -142,6 +160,7 @@ verificationForm.addEventListener('submit', async (event) => {
 switchEmailButton.addEventListener('click', async () => {
   if (auth) await auth.signOut();
   form.reset();
+  updateSubjectFields();
   requestCard.classList.add('hidden');
   verificationCard.classList.remove('hidden');
   verificationEmail.value = '';
@@ -160,21 +179,25 @@ form.addEventListener('submit', async (event) => {
     if (!user.emailVerified) throw new Error('Verify your email before submitting.');
 
     const data = Object.fromEntries(new FormData(form).entries());
+    const isNewUser = data.subject === 'New User';
     const publicData = {
       ticketType: 'joe_e',
       requesterName: normalizeEmail(user.email),
       providerName: data.providerName.trim(),
       userType: data.userType,
       newUserFullName: data.newUserFullName.trim(),
-      newUserEmail: normalizeEmail(data.newUserEmail),
+      newUserEmail: isNewUser ? normalizeEmail(data.newUserEmail) : '',
       npi: data.npi.trim()
     };
     const description = [
       'Joe-E access request',
+      `Request type: ${data.subject}`,
       `Requester: ${publicData.requesterName}`,
       `Provider: ${publicData.providerName}`,
       `User type: ${publicData.userType}`,
-      `New user: ${publicData.newUserFullName} <${publicData.newUserEmail}>`,
+      isNewUser
+        ? `New user: ${publicData.newUserFullName} <${publicData.newUserEmail}>`
+        : `User name: ${publicData.newUserFullName}`,
       `NPI: ${publicData.npi || 'Not provided'}`
     ].join('\n');
     const now = new Date().toISOString();

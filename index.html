@@ -49,7 +49,7 @@
         <label for="provider-name">Provider Name <span aria-hidden="true">*</span></label>
         <input id="provider-name" name="providerName" type="text" maxlength="150" required>
 
-        <label for="subject">Subject <span aria-hidden="true">*</span></label>
+        <label for="subject">Request Type <span aria-hidden="true">*</span></label>
         <select id="subject" name="subject" required>
           <option value="">Select a request type</option>
           <option value="New User">New User</option>
@@ -65,12 +65,14 @@
           <option value="Clinician">Clinician</option>
         </select>
 
-        <label for="new-user-name">New User Full Name <span aria-hidden="true">*</span></label>
+        <label for="new-user-name" id="new-user-name-label">New User Full Name <span aria-hidden="true">*</span></label>
         <input id="new-user-name" name="newUserFullName" type="text" maxlength="150" required>
 
-        <label for="new-user-email">New User Email <span aria-hidden="true">*</span></label>
-        <input id="new-user-email" name="newUserEmail" type="email" maxlength="254"
-          autocomplete="email" required>
+        <div id="new-user-email-field">
+          <label for="new-user-email">New User Email <span aria-hidden="true">*</span></label>
+          <input id="new-user-email" name="newUserEmail" type="email" maxlength="254"
+            autocomplete="email" required>
+        </div>
 
         <label for="npi">NPI #</label>
         <input id="npi" name="npi" type="text" inputmode="numeric" maxlength="10"

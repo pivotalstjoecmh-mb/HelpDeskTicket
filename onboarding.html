@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102238">
+  <meta name="description" content="Submit a new employee onboarding request to the IT team.">
+  <title>New Employee Onboarding</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="config.js"></script>
+  <script src="onboarding-app.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <p class="eyebrow">IT HELPDESK · NEW EMPLOYEE</p>
+      <h1>Onboarding request</h1>
+      <p>Complete this form to request accounts and equipment for a new employee.</p>
+    </header>
+
+    <section class="card" id="request-card" aria-labelledby="form-title">
+      <h2 id="form-title">Onboarding details</h2>
+      <p class="required-note">Fields marked required must be completed. Select all access and equipment needed.</p>
+      <div id="form-notice" class="notice" role="status" aria-live="polite"></div>
+
+      <form id="request-form">
+        <label for="requester-email">Your work email <span aria-hidden="true">*</span></label>
+        <input id="requester-email" name="requesterEmail" type="email" maxlength="254"
+          autocomplete="email" required>
+        <p class="field-hint">Must end in @pivotalstjoe.org or @stjoecmh.org.</p>
+
+        <label for="full-name">New User Full Name <span aria-hidden="true">*</span></label>
+        <input id="full-name" name="fullName" type="text" maxlength="150" required>
+
+        <label for="start-date">Start Date <span aria-hidden="true">*</span></label>
+        <input id="start-date" name="startDate" type="date" required>
+
+        <label for="supervisor">Supervisor <span aria-hidden="true">*</span></label>
+        <input id="supervisor" name="supervisor" type="text" maxlength="150" required>
+
+        <label for="department">Department</label>
+        <input id="department" name="department" type="text" maxlength="150">
+
+        <label for="job-title">Job Title</label>
+        <input id="job-title" name="jobTitle" type="text" maxlength="150">
+
+        <label class="check-option">
+          <input name="emailNeeded" type="checkbox">
+          <span>Email Needed</span>
+        </label>
+
+        <label for="user-to-copy">User To Copy</label>
+        <input id="user-to-copy" name="userToCopy" type="text" maxlength="254">
+
+        <label class="check-option">
+          <input name="sDriveAccess" type="checkbox">
+          <span>S-Drive Access</span>
+        </label>
+
+        <fieldset class="choice-fieldset">
+          <legend>Distribution Groups</legend>
+          <div class="choice-grid">
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Access"><span>Access</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="ACT"><span>ACT</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Adult Services"><span>Adult Services</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="All Staff"><span>All Staff</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Autism Coordinators"><span>Autism Coordinators</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Care Coordinators"><span>Care Coordinators</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Case Consultation"><span>Case Consultation</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Case Management"><span>Case Management</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Centreville Office Staff"><span>Centreville Office Staff</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Childrens Clinical Staff"><span>Childrens Clinical Staff</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Client Communication"><span>Client Communication</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Clinical Staff"><span>Clinical Staff</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Clubhouse"><span>Clubhouse</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Customer Service"><span>Customer Service</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="EMDR Group"><span>EMDR Group</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Emergency Services"><span>Emergency Services</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Emergency Services Fax"><span>Emergency Services Fax</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="ERWC"><span>ERWC</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="General"><span>General</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Help Desk"><span>Help Desk</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="IOP"><span>IOP</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Management"><span>Management</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Med Clinic Staff"><span>Med Clinic Staff</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Mobile Crisis"><span>Mobile Crisis</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Outpatient"><span>Outpatient</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Peer Support"><span>Peer Support</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="PIvotalIT"><span>PIvotalIT</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="PMTO Clinicians"><span>PMTO Clinicians</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="SA Staff"><span>SA Staff</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Safety Committee"><span>Safety Committee</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Sturgis Office Staff"><span>Sturgis Office Staff</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="TechSupport"><span>TechSupport</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Three Rivers Office"><span>Three Rivers Office</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Trauma Workgroup"><span>Trauma Workgroup</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Youth Intervention"><span>Youth Intervention</span></label>
+            <label class="check-option"><input name="distributionGroups" type="checkbox" value="Zero Suicide"><span>Zero Suicide</span></label>
+          </div>
+        </fieldset>
+        <label for="other-distribution-groups">Other Distribution Groups</label>
+        <textarea id="other-distribution-groups" name="otherDistributionGroups" rows="2" maxlength="1000" placeholder="Add any other groups needed"></textarea>
+
+        <label class="check-option">
+          <input name="sharepointAccess" type="checkbox">
+          <span>SharePoint Access</span>
+        </label>
+        <label for="sharepoint-details">SharePoint sites or details</label>
+        <input id="sharepoint-details" name="sharepointDetails" type="text" maxlength="1000">
+
+        <label class="check-option"><input name="powerBi" type="checkbox"><span>PowerBI</span></label>
+        <label class="check-option"><input name="evvNeeded" type="checkbox"><span>EVV Needed</span></label>
+        <label class="check-option"><input name="laptopNeeded" type="checkbox"><span>Laptop Needed</span></label>
+        <label class="check-option"><input name="signaturePadNeeded" type="checkbox"><span>Signature Pad Needed</span></label>
+        <label class="check-option"><input name="deskPhoneNeeded" type="checkbox"><span>Desk Phone Needed</span></label>
+        <label class="check-option"><input name="voicemail" type="checkbox"><span>Voicemail</span></label>
+        <label class="check-option"><input name="cellPhoneNeeded" type="checkbox"><span>Cell Phone Needed</span></label>
+        <label class="check-option"><input name="joeENeeded" type="checkbox"><span>Joe-E Needed</span></label>
+
+        <label for="location">Location</label>
+        <input id="location" name="location" type="text" maxlength="200">
+
+        <label for="license-npi">License NPI#</label>
+        <input id="license-npi" name="licenseNpi" type="text" maxlength="100">
+
+        <label for="staff-type">Staff Type</label>
+        <input id="staff-type" name="staffType" type="text" maxlength="100">
+
+        <label for="same-as-user-joe-e">Same As User in Joe-E</label>
+        <input id="same-as-user-joe-e" name="sameAsUserInJoeE" type="text" maxlength="254">
+
+        <button id="submit-button" type="submit">Submit onboarding request</button>
+      </form>
+      <p class="privacy-note">Do not include passwords or other sensitive information in this form.</p>
+    </section>
+    <footer>Requests are sent to the IT team for review.</footer>
+  </main>
+
+  <dialog class="submission-dialog" id="submission-dialog" aria-labelledby="submission-title">
+    <div class="submission-confirmation">
+      <span class="submission-check" aria-hidden="true">✓</span>
+      <p class="eyebrow">REQUEST RECEIVED</p>
+      <h2 id="submission-title">Your request was submitted</h2>
+      <p id="submission-message">Your onboarding request has been received by the IT team.</p>
+      <div class="submitted-ticket-number">
+        <span>Ticket number</span>
+        <strong id="submitted-ticket-number"></strong>
+      </div>
+      <button class="primary-button" id="submission-close-button" type="button">Done</button>
+    </div>
+  </dialog>
+</body>
+</html>

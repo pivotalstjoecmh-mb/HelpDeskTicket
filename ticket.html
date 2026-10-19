@@ -8,7 +8,6 @@
   <title>IT Helpdesk Ticket</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="config.js"></script>
   <script src="ticket-app.js" defer></script>
@@ -21,30 +20,16 @@
       <p>Tell us what's going on and our IT team will take a look.</p>
     </header>
 
-    <section class="card" id="verification-card" aria-labelledby="verification-title">
-      <h2 id="verification-title">Verify your work email</h2>
-      <p class="required-note">We’ll email you a secure sign-in link. Open it to verify your email before submitting a ticket.</p>
-      <div id="verification-notice" class="notice" role="status" aria-live="polite"></div>
-      <form id="verification-form">
-        <label for="verification-email">Your work email <span aria-hidden="true">*</span></label>
-        <input id="verification-email" name="email" type="email" maxlength="254"
-          autocomplete="email" required>
-        <button id="verification-button" type="submit">Email me a sign-in link</button>
-      </form>
-    </section>
-
-    <section class="card hidden" id="request-card" aria-labelledby="form-title">
+    <section class="card" id="request-card" aria-labelledby="form-title">
       <h2 id="form-title">Ticket details</h2>
-      <div class="signed-in-row">
-        <p id="verified-email" class="required-note"></p>
-        <button id="switch-email-button" class="secondary-button" type="button">Use another email</button>
-      </div>
       <p class="required-note">Fields marked required must be completed.</p>
       <div id="form-notice" class="notice" role="status" aria-live="polite"></div>
 
       <form id="request-form">
-        <label for="requester-line">Requester</label>
-        <input id="requester-line" type="text" disabled>
+        <label for="requester-email">Your work email <span aria-hidden="true">*</span></label>
+        <input id="requester-email" name="requesterEmail" type="email" maxlength="254"
+          autocomplete="email" required>
+        <p class="field-hint">Must end in @pivotalstjoe.org or @stjoecmh.org.</p>
 
         <label for="subject">Subject <span aria-hidden="true">*</span></label>
         <input id="subject" name="subject" type="text" maxlength="150" minlength="3" required>

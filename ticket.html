@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102238">
+  <meta name="description" content="Submit an IT helpdesk ticket.">
+  <title>IT Helpdesk Ticket</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="config.js"></script>
+  <script src="ticket-app.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <p class="eyebrow">IT HELPDESK</p>
+      <h1>Submit a ticket</h1>
+      <p>Tell us what's going on and our IT team will take a look.</p>
+    </header>
+
+    <section class="card" id="verification-card" aria-labelledby="verification-title">
+      <h2 id="verification-title">Verify your work email</h2>
+      <p class="required-note">We’ll email you a secure sign-in link. Open it to verify your email before submitting a ticket.</p>
+      <div id="verification-notice" class="notice" role="status" aria-live="polite"></div>
+      <form id="verification-form">
+        <label for="verification-email">Your work email <span aria-hidden="true">*</span></label>
+        <input id="verification-email" name="email" type="email" maxlength="254"
+          autocomplete="email" required>
+        <button id="verification-button" type="submit">Email me a sign-in link</button>
+      </form>
+    </section>
+
+    <section class="card hidden" id="request-card" aria-labelledby="form-title">
+      <h2 id="form-title">Ticket details</h2>
+      <div class="signed-in-row">
+        <p id="verified-email" class="required-note"></p>
+        <button id="switch-email-button" class="secondary-button" type="button">Use another email</button>
+      </div>
+      <p class="required-note">Fields marked required must be completed.</p>
+      <div id="form-notice" class="notice" role="status" aria-live="polite"></div>
+
+      <form id="request-form">
+        <label for="requester-line">Requester</label>
+        <input id="requester-line" type="text" disabled>
+
+        <label for="subject">Subject <span aria-hidden="true">*</span></label>
+        <input id="subject" name="subject" type="text" maxlength="150" minlength="3" required>
+
+        <label for="category">Category <span aria-hidden="true">*</span></label>
+        <select id="category" name="category" required>
+          <option value="">Select a category</option>
+          <option value="hardware">Hardware</option>
+          <option value="software">Software</option>
+          <option value="access">Access</option>
+          <option value="network">Network</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label for="description">Description <span aria-hidden="true">*</span></label>
+        <textarea id="description" name="description" rows="5" minlength="10" maxlength="5000" required></textarea>
+        <p class="field-hint">Include what you were doing, any error messages, and your device or location if relevant.</p>
+
+        <button id="submit-button" type="submit">Submit ticket</button>
+      </form>
+      <p class="privacy-note">Do not include passwords or other sensitive information in this form.</p>
+    </section>
+    <footer>Tickets are sent to the IT team for review.</footer>
+  </main>
+
+  <dialog class="submission-dialog" id="submission-dialog" aria-labelledby="submission-title">
+    <div class="submission-confirmation">
+      <span class="submission-check" aria-hidden="true">✓</span>
+      <p class="eyebrow">TICKET RECEIVED</p>
+      <h2 id="submission-title">Your ticket was submitted</h2>
+      <p id="submission-message">Your ticket has been received by the IT team.</p>
+      <div class="submitted-ticket-number">
+        <span>Ticket number</span>
+        <strong id="submitted-ticket-number"></strong>
+      </div>
+      <button class="primary-button" id="submission-close-button" type="button">Done</button>
+    </div>
+  </dialog>
+</body>
+</html>
